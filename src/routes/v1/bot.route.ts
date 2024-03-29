@@ -28,7 +28,7 @@ router
         },
       }
     );
-
+    console.log('quote', quote)
     try {
       const tx = await wallet.sendTransaction({
         data: quote.data.data,
@@ -47,3 +47,26 @@ router
 
 
 export default router;
+
+
+
+/**
+ * @swagger
+ * tags:
+ *   name: Bots
+ *   description: Swap bot
+ */
+
+
+/**
+ * @swagger
+ * /bot:
+ *   get:
+ *     summary: Get a bot
+ *     description: token auto swap bot.
+ *     tags: [Bots]
+ *
+ */
+
+
+
