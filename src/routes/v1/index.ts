@@ -1,37 +1,32 @@
-import express, { Router } from 'express';
-import docsRoute from './swagger.route';
+import express from 'express';
 import botRoute from './bot.route';
+import docsRoute from './docs.route';
 import config from '../../config/config';
 
 const router = express.Router();
 
-interface IRoute {
-  path: string;
-  route: Router;
-}
-
-const defaultIRoute: IRoute[] = [
+const defaultRoutes = [
   {
-    path: '/bot',
-    route: botRoute,
-  },
+    path: '/0x',
+    route: botRoute
+  }
 ];
 
-const devIRoute: IRoute[] = [
-  // IRoute available only in development mode
+const devRoutes = [
+  // routes available only in development mode
   {
     path: '/docs',
-    route: docsRoute,
-  },
+    route: docsRoute
+  }
 ];
 
-defaultIRoute.forEach((route) => {
+defaultRoutes.forEach((route) => {
   router.use(route.path, route.route);
 });
 
 /* istanbul ignore next */
 if (config.env === 'development') {
-  devIRoute.forEach((route) => {
+  devRoutes.forEach((route) => {
     router.use(route.path, route.route);
   });
 }

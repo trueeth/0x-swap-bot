@@ -11,8 +11,11 @@ yarn-error.log
 # Code coverage
 coverage
 
-# build folder
-dist
+# misc
+.DS_Store
 
-# docker volume
-data
+# Dev db data
+db
+
+# TypeScript
+build

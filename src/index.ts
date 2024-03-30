@@ -1,14 +1,15 @@
-// import mongoose from 'mongoose';
+import { Server } from 'http';
 import app from './app';
+import prisma from './client';
 import config from './config/config';
-import logger from './modules/logger/logger';
+import logger from './config/logger';
 
-let server: any;
-// mongoose.connect(config.mongoose.url).then(() => {
-//   logger.info('Connected to MongoDB');
-// });
-server = app.listen(config.port, () => {
-  logger.info(`Listening to port ${config.port}`);
+let server: Server;
+prisma.$connect().then(() => {
+  logger.info('Connected to SQL Database');
+  server = app.listen(config.port, () => {
+    logger.info(`Listening to port ${config.port}`);
+  });
 });
 
 const exitHandler = () => {
@@ -22,7 +23,7 @@ const exitHandler = () => {
   }
 };
 
-const unexpectedErrorHandler = (error: string) => {
+const unexpectedErrorHandler = (error: unknown) => {
   logger.error(error);
   exitHandler();
 };

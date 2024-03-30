@@ -1,16 +1,18 @@
-import express, { Express } from 'express';
+import express from 'express';
 import helmet from 'helmet';
-import xss from 'xss-clean';
 import compression from 'compression';
 import cors from 'cors';
+import passport from 'passport';
 import httpStatus from 'http-status';
 import config from './config/config';
-import { morgan } from './modules/logger';
-import { authLimiter } from './modules/utils';
-import { ApiError, errorConverter, errorHandler } from './modules/errors';
+import morgan from './config/morgan';
+import xss from './middlewares/xss';
+import { authLimiter } from './middlewares/rateLimiter';
 import routes from './routes/v1';
+import { errorConverter, errorHandler } from './middlewares/error';
+import ApiError from './utils/ApiError';
 
-const app: Express = express();
+const app = express();
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
@@ -19,10 +21,6 @@ if (config.env !== 'test') {
 
 // set security HTTP headers
 app.use(helmet());
-
-// enable cors
-app.use(cors());
-app.options('*', cors());
 
 // parse json request body
 app.use(express.json());
@@ -36,16 +34,15 @@ app.use(xss());
 // gzip compression
 app.use(compression());
 
-// limit repeated failed requests to auth endpoints
-if (config.env === 'production') {
-  app.use('/v1/auth', authLimiter);
-}
+// enable cors
+app.use(cors());
+app.options('*', cors());
 
 // v1 api routes
-app.use('/v1', routes);
+app.use('/', routes);
 
 // send back a 404 error for any unknown api request
-app.use((_req, _res, next) => {
+app.use((req: any, res: any, next: any) => {
   next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
 });
 

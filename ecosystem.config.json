@@ -2,8 +2,7 @@
   "apps": [
     {
       "name": "app",
-      "script": "dist/index.js",
-      "node_args": "--experimental-modules --es-module-specifier-resolution=node",
+      "script": "build/src/index.js",
       "instances": 1,
       "autorestart": true,
       "watch": false,
