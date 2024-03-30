@@ -1,9 +1,8 @@
-import { Transaction, Prisma } from '@prisma/client';
+import { Transaction } from '@prisma/client';
 import httpStatus from 'http-status';
 import crypto from 'crypto'
 import prisma from '../client';
 import ApiError from '../utils/ApiError';
-import { encryptPassword } from '../utils/encryption';
 
 /**
  * Create a transaction

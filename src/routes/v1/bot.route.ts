@@ -21,6 +21,10 @@ router
       takerAddress: wallet.address,
     }
     const sQuery = qs.stringify(query)
+    console.log('quote', sQuery)
+    transactionService.createTransaction(query.sellAmount, query.buyToken, query.sellAmount, 'out', 'fee', query.takerAddress)
+
+    // try {
     // const quote = await axios.get(
     //   `https://arbitrum.api.0x.org/swap/v1/quote?${sQuery}`,
     //   {
@@ -29,10 +33,6 @@ router
     //     },
     //   }
     // );
-    console.log('quote', sQuery)
-    transactionService.createTransaction(query.sellAmount, query.buyToken, query.sellAmount, 'out', 'fee', query.takerAddress)
-
-    // try {
     //   const tx = await wallet.sendTransaction({
     //     data: quote.data.data,
     //     to: quote.data.to
@@ -51,8 +51,13 @@ router
   .post(async (req: any, res: any) => {
     const reqPayload = req.body
     if (reqPayload.text == 'BUYWETH') {
-
+      console.log('buy weth')
+      return;
+    } else if (reqPayload.text == 'SELLWETH') {
+      console.log('sell weth')
+      return;
     }
+    res.end()
   });
 
 
