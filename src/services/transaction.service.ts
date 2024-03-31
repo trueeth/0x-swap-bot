@@ -10,27 +10,70 @@ import ApiError from '../utils/ApiError';
  * @returns {Promise<Transaction>}
  */
 const createTransaction = async (
-  tokenIn: string,
-  tokenOut: string,
-  tokenInAmount: string,
-  tokenOutAmount: string,
-  fee: string,
-  sender: string,
+  txHash: string,
+  txType: string,
+  amount: string,
+  price: string,
 ): Promise<Transaction> => {
   const id = crypto.randomUUID()
   return prisma.transaction.create({
     data: {
       id,
-      tokenIn,
-      tokenOut,
-      tokenInAmount,
-      tokenOutAmount,
-      fee,
-      sender
+      txHash,
+      txType,
+      amount,
+      fee: "",
+      sender: "",
+      price
     }
   });
 };
 
+
+/**
+ * Query for transactions
+ * @param {Object} filter - Prisma filter
+ * @param {Object} options - Query options
+ * @param {string} [options.sortBy] - Sort option in the format: sortField:(desc|asc)
+ * @param {number} [options.limit] - Maximum number of results per page (default = 10)
+ * @param {number} [options.page] - Current page (default = 1)
+ * @returns {Promise<QueryResult>}
+ */
+const queryGetTransactions = async <Key extends keyof Transaction>(
+  options: {
+    limit?: number;
+    page?: number;
+    sortBy?: string;
+    sortType?: 'asc' | 'desc';
+  },
+  filter: object = {
+    id: {
+      not: ""
+    }
+  },
+  keys: Key[] = [
+    'id',
+    'txHash',
+    'txType',
+    'amount',
+    'price',
+    'createdAt',
+  ] as Key[]
+): Promise<Pick<Transaction, Key>[]> => {
+  console.log(filter)
+  const page = options.page ?? 1;
+  const limit = options.limit ?? 10;
+  const sortBy = options.sortBy ?? 'createdAt';
+  const sortType = options.sortType ?? 'desc';
+  const transactions = await prisma.transaction.findMany({
+    where: filter,
+    select: keys.reduce((obj, k) => ({ ...obj, [k]: true }), {}),
+    skip: page * limit,
+    take: Number(limit),
+    orderBy: sortBy ? { [sortBy]: sortType } : undefined
+  });
+  return transactions as Pick<Transaction, Key>[];
+};
 
 /**
  * Get transaction by id
@@ -42,12 +85,9 @@ const getTransactionById = async <Key extends keyof Transaction>(
   id: string,
   keys: Key[] = [
     'id',
-    'tokenIn',
-    'tokenOut',
-    'tokenInAmount',
-    'tokenOutAmount',
-    'fee',
-    'sender',
+    'txHash',
+    'txType',
+    'amount',
     'createdAt',
     'updatedAt'
   ] as Key[]
@@ -72,8 +112,21 @@ const deleteTransactionById = async (transactionId: string): Promise<Transaction
   return transaction;
 };
 
+
+/**
+ * Get counts by filter
+ * @returns {Promise<Number>}
+ */
+const getTransactionCountsByFilter = async (): Promise<Number> => {
+  const counts = await prisma.transaction.count()
+
+  return counts;
+};
+
 export default {
   createTransaction,
+  queryGetTransactions,
   getTransactionById,
-  deleteTransactionById
+  deleteTransactionById,
+  getTransactionCountsByFilter
 };

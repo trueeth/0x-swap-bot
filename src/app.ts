@@ -37,7 +37,9 @@ app.use(cors());
 app.options('*', cors());
 
 // v1 api routes
-app.use('/', routes);
+app.use('/v1/', routes);
+
+app.use('/', express.static("frontend"))
 
 // send back a 404 error for any unknown api request
 app.use((req: any, res: any, next: any) => {

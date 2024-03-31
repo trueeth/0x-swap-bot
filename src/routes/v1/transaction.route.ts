@@ -1,18 +1,12 @@
 import express from 'express';
-import { botController } from '../../controllers';
-import logger from '../../config/logger';
+import transactionController from '../../controllers/transaction.controller';
 
 const router = express.Router();
 
 
 router
   .route('/')
-  .get(async (_req: any, res: any) => {
-    logger.info("Weth Token Swap, get request")
-    res.send("Weth token swap")
-  })
-  .post(botController.tokenSwap);
-
+  .get(transactionController.getTransactions)
 
 
 

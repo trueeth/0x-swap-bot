@@ -13,12 +13,12 @@ datasource db {
 
 model Transaction {
   id              String @unique
-  tokenIn         String
-  tokenOut        String
-  tokenInAmount   String
-  tokenOutAmount  String
-  fee             String
-  sender          String  
+  txHash          String
+  txType          String
+  amount          String
+  price           String?
+  fee             String? 
+  sender          String?  
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }

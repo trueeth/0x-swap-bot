@@ -1,5 +1,6 @@
 import express from 'express';
 import botRoute from './bot.route';
+import transactionRoute from './transaction.route';
 import docsRoute from './docs.route';
 import config from '../../config/config';
 
@@ -7,8 +8,12 @@ const router = express.Router();
 
 const defaultRoutes = [
   {
-    path: '/0x',
+    path: '/bot',
     route: botRoute
+  },
+  {
+    path: '/transaction',
+    route: transactionRoute
   }
 ];
 
